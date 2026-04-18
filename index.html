@@ -98,34 +98,6 @@
       background: transparent;
     }
 
-    /* CAROUSEL NAV TABS */
-    .carousel-nav {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      margin-bottom: 24px;
-      flex-wrap: wrap;
-    }
-    .carousel-tab {
-      padding: 8px 22px;
-      border-radius: 30px;
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      cursor: pointer;
-      border: 1px solid rgba(255,255,255,0.15);
-      background: rgba(255,255,255,0.05);
-      color: rgba(255,255,255,0.5);
-      transition: all .25s;
-    }
-    .carousel-tab:hover { color: #fff; border-color: rgba(255,255,255,0.35); background: rgba(255,255,255,0.1); }
-    .carousel-tab.active { color: #000; border-color: transparent; }
-    .carousel-tab[data-cat="all"].active    { background: linear-gradient(90deg,#f9d923,#ff6b6b); }
-    .carousel-tab[data-cat="pokemon"].active { background: linear-gradient(90deg,#f9d923,#ffb347); color:#000; }
-    .carousel-tab[data-cat="basketball"].active { background: linear-gradient(90deg,#ff6b6b,#ff8e53); color:#000; }
-    .carousel-tab[data-cat="soccer"].active { background: linear-gradient(90deg,#64dc50,#44bb33); color:#000; }
-    .carousel-tab[data-cat="kpop"].active   { background: linear-gradient(90deg,#ffd050,#ffaa00); color:#000; }
-
     /* CAROUSEL */
     .carousel-wrapper {
       position: relative;
@@ -620,18 +592,21 @@
       <a href="#contact" class="btn btn-outline">联系我们</a>
     </div>
 
-    <!-- CAROUSEL NAV -->
-    <div class="carousel-nav">
-      <button class="carousel-tab active" data-cat="all">ALL</button>
-      <button class="carousel-tab" data-cat="pokemon">POKEMON</button>
-      <button class="carousel-tab" data-cat="basketball">BASKETBALL</button>
-      <button class="carousel-tab" data-cat="soccer">SOCCER</button>
-      <button class="carousel-tab" data-cat="kpop">K-POP</button>
-    </div>
-
     <!-- CAROUSEL -->
     <div class="carousel-wrapper">
       <div class="carousel-track" id="carouselTrack">
+        <div class="carousel-card" data-category="basketball" data-front="images/card1.jpg" data-back="images/card1-back.jpg" data-name="Kaboom! Tracy McGrady" data-sub="NBA · PSA 10"><img src="images/card1.jpg" alt="Kaboom Tracy McGrady" /><div class="c-caption"><span class="c-name">Kaboom! Tracy McGrady</span><span class="c-sub">NBA · PSA 10</span></div></div>
+        <div class="carousel-card" data-category="basketball" data-front="images/card2.jpg" data-back="images/card2-back.jpg" data-name="Flawless Tracy McGrady" data-sub="NBA · 钻石版"><img src="images/card2.jpg" alt="Flawless Tracy McGrady" /><div class="c-caption"><span class="c-name">Flawless Tracy McGrady</span><span class="c-sub">NBA · 钻石版</span></div></div>
+        <div class="carousel-card" data-category="basketball" data-front="images/card3.jpg" data-back="images/card3-back.jpg" data-name="Sneaker Spotlight T-Mac" data-sub="NBA · 鞋灯"><img src="images/card3.jpg" alt="Sneaker Spotlight Tracy McGrady" /><div class="c-caption"><span class="c-name">Sneaker Spotlight T-Mac</span><span class="c-sub">NBA · 鞋灯</span></div></div>
+        <div class="carousel-card" data-category="basketball" data-front="images/card4.jpg" data-back="images/card4-back.jpg" data-name="Topps Chrome Gold Refractor" data-sub="NBA · Tracy McGrady"><img src="images/card4.jpg" alt="Topps Chrome Gold Refractor" /><div class="c-caption"><span class="c-name">Topps Chrome Gold Refractor</span><span class="c-sub">NBA · Tracy McGrady</span></div></div>
+        <div class="carousel-card" data-category="basketball" data-front="images/card5.jpg" data-back="images/card5-back.jpg" data-name="Bowman's Expressions" data-sub="NBA · Tracy McGrady"><img src="images/card5.jpg" alt="Bowman's Expressions" /><div class="c-caption"><span class="c-name">Bowman's Expressions</span><span class="c-sub">NBA · Tracy McGrady</span></div></div>
+        <div class="carousel-card" data-category="basketball" data-front="images/card6.jpg" data-back="images/card6-back.jpg" data-name="Player Of The Day 1/1" data-sub="NBA · Raptors T-Mac"><img src="images/card6.jpg" alt="Player Of The Day 1/1" /><div class="c-caption"><span class="c-name">Player Of The Day 1/1</span><span class="c-sub">NBA · Raptors T-Mac</span></div></div>
+        <div class="carousel-card" data-category="pokemon" data-front="images/card7.jpg" data-back="images/card7-back.jpg" data-name="Mega Gengar SAR" data-sub="Pokemon · 稀有卡"><img src="images/card7.jpg" alt="Mega Gengar SAR" /><div class="c-caption"><span class="c-name">Mega Gengar SAR</span><span class="c-sub">Pokemon · 稀有卡</span></div></div>
+        <div class="carousel-card" data-category="soccer" data-front="images/card8.jpg" data-back="images/card8-back.jpg" data-name="Kevin De Bruyne-Lotus Flower" data-sub="Soccer · Prizm"><img src="images/card8.jpg" alt="Kevin De Bruyne Lotus Flower" /><div class="c-caption"><span class="c-name">Kevin De Bruyne-Lotus Flower</span><span class="c-sub">Soccer · Prizm</span></div></div>
+        <div class="carousel-card" data-category="soccer" data-front="images/card9.jpg" data-back="images/card9-back.jpg" data-name="Kevin De Bruyne-Cherry Blossom" data-sub="Soccer · Prizm"><img src="images/card9.jpg" alt="Kevin De Bruyne Cherry Blossom" /><div class="c-caption"><span class="c-name">Kevin De Bruyne-Cherry Blossom</span><span class="c-sub">Soccer · Prizm</span></div></div>
+        <div class="carousel-card" data-category="soccer" data-front="images/card10.jpg" data-back="images/card10-back.jpg" data-name="Cole Palmer-City Cards Black" data-sub="Soccer · Topps"><img src="images/card10.jpg" alt="Cole Palmer City Cards Black" /><div class="c-caption"><span class="c-name">Cole Palmer-City Cards Black</span><span class="c-sub">Soccer · Topps</span></div></div>
+        <div class="carousel-card" data-category="soccer" data-front="images/card11.jpg" data-back="images/card11-back.jpg" data-name="Argentina-FIFA World Cup Qatar" data-sub="Soccer · Topps"><img src="images/card11.jpg" alt="Argentina FIFA World Cup Qatar" /><div class="c-caption"><span class="c-name">Argentina-FIFA World Cup Qatar</span><span class="c-sub">Soccer · Topps</span></div></div>
+        <!-- duplicate for seamless loop -->
         <div class="carousel-card" data-category="basketball" data-front="images/card1.jpg" data-back="images/card1-back.jpg" data-name="Kaboom! Tracy McGrady" data-sub="NBA · PSA 10"><img src="images/card1.jpg" alt="Kaboom Tracy McGrady" /><div class="c-caption"><span class="c-name">Kaboom! Tracy McGrady</span><span class="c-sub">NBA · PSA 10</span></div></div>
         <div class="carousel-card" data-category="basketball" data-front="images/card2.jpg" data-back="images/card2-back.jpg" data-name="Flawless Tracy McGrady" data-sub="NBA · 钻石版"><img src="images/card2.jpg" alt="Flawless Tracy McGrady" /><div class="c-caption"><span class="c-name">Flawless Tracy McGrady</span><span class="c-sub">NBA · 钻石版</span></div></div>
         <div class="carousel-card" data-category="basketball" data-front="images/card3.jpg" data-back="images/card3-back.jpg" data-name="Sneaker Spotlight T-Mac" data-sub="NBA · 鞋灯"><img src="images/card3.jpg" alt="Sneaker Spotlight Tracy McGrady" /><div class="c-caption"><span class="c-name">Sneaker Spotlight T-Mac</span><span class="c-sub">NBA · 鞋灯</span></div></div>
@@ -1000,42 +975,12 @@
     });
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
 
-    /* ── Carousel filter ── */
-    const track = document.getElementById('carouselTrack');
-    const sourcecards = Array.from(track.querySelectorAll('.carousel-card'));
-
-    function buildTrack(cat) {
-      const filtered = cat === 'all' ? sourcecards : sourcecards.filter(c => c.dataset.category === cat);
-      track.innerHTML = '';
-      // double for seamless loop
-      [...filtered, ...filtered].forEach(c => {
-        const clone = c.cloneNode(true);
-        track.appendChild(clone);
-      });
-      // reset animation
-      track.style.animation = 'none';
-      track.offsetHeight; // reflow
-      track.style.animation = '';
-      attachCardClicks();
-    }
-
-    function attachCardClicks() {
-      track.querySelectorAll('.carousel-card').forEach(card => {
-        card.addEventListener('click', () => {
-          openLightbox(card.dataset.front, card.dataset.back, card.dataset.name, card.dataset.sub);
-        });
-      });
-    }
-
-    document.querySelectorAll('.carousel-tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        document.querySelectorAll('.carousel-tab').forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        buildTrack(tab.dataset.cat);
+    /* attach click to carousel cards */
+    document.querySelectorAll('.carousel-card').forEach(card => {
+      card.addEventListener('click', () => {
+        openLightbox(card.dataset.front, card.dataset.back, card.dataset.name, card.dataset.sub);
       });
     });
-
-    buildTrack('all');
 
     /* ── Stats counter animation ── */
     function animateCount(el, target, duration) {
