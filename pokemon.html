@@ -68,6 +68,8 @@
     .catalog-section { padding: 40px 60px 60px; }
     .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; margin-bottom: 48px; }
     .no-results { grid-column: 1 / -1; text-align: center; color: rgba(255,255,255,0.3); padding: 60px 0; font-size: 15px; letter-spacing: 0.5px; }
+    .product-link { text-decoration: none; color: inherit; display: block; transition: color .2s; }
+    .product-link:hover { color: var(--theme); }
 
     /* PRODUCT CARD */
     .product-card {
@@ -202,6 +204,7 @@
   </div>
 
   <script>
+    const CAT = 'pokemon';
     const CARDS = [
       { name: "Mega Gengar SAR", grade: "PSA 10", price: "$280", desc: "Scarlet & Violet 151 set. One of the most sought-after SAR pulls worldwide.", front: "images/card7.jpg", back: "images/card7-back.jpg" },
     ];
@@ -239,7 +242,7 @@
               <span class="grade-badge ${getGradeClass(c.grade)}">${c.grade}</span>
               <span class="product-price">${c.price}</span>
             </div>
-            <div class="product-name">${c.name}</div>
+            <a class="product-name product-link" href="product.html?cat=${CAT}&name=${encodeURIComponent(c.name)}&grade=${encodeURIComponent(c.grade)}&price=${encodeURIComponent(c.price)}&desc=${encodeURIComponent(c.desc)}&front=${encodeURIComponent(c.front)}&back=${encodeURIComponent(c.back)}">${c.name}</a>
             <div class="product-desc">${c.desc}</div>
             <div class="product-actions">
               <button class="btn-buy">BUY NOW</button>
