@@ -116,6 +116,9 @@
       cursor: pointer; font-size: 20px; transition: border-color .2s, background .2s; flex-shrink: 0;
     }
     .btn-icon-lg:hover { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); }
+    .btn-icon-lg[title="Favourite"] { border-color: rgba(255,255,255,0.5); background: transparent; color: #fff; }
+    .btn-icon-lg[title="Favourite"].faved { color: #ff4d6d; border-color: #ff4d6d; }
+    .btn-icon-lg[title="Favourite"]:hover { background: rgba(255,255,255,0.08); }
 
     .detail-contact {
       padding: 20px 24px; background: rgba(255,255,255,0.03);
@@ -223,7 +226,7 @@
         <div class="detail-actions">
           <button class="btn-buy-lg">BUY NOW</button>
           <button class="btn-icon-lg" title="Add to Cart">🛒</button>
-          <button class="btn-icon-lg" title="Favourite">♡</button>
+          <button class="btn-icon-lg" onclick="toggleFav(this)" title="Favourite">♡</button>
         </div>
         <div class="detail-contact">
           <div class="contact-title">Enquire About This Card</div>
@@ -328,6 +331,10 @@
       tip.classList.add('show');
       clearTimeout(tip._t);
       tip._t = setTimeout(() => tip.classList.remove('show'), 1500);
+    }
+    function toggleFav(btn) {
+      btn.classList.toggle('faved');
+      btn.textContent = btn.classList.contains('faved') ? '♥' : '♡';
     }
   </script>
 </body>

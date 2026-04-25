@@ -166,8 +166,9 @@
     .btn-icon:hover { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); }
     .btn-icon[title="Add to Cart"] { border-color: var(--theme); background: var(--theme-dim); }
     .btn-icon[title="Add to Cart"]:hover { background: var(--theme); color: #000; transform: scale(1.08); }
-    .btn-icon[title="Favourite"] { border-color: var(--theme); background: var(--theme-dim); color: #fff; }
-    .btn-icon[title="Favourite"]:hover { background: var(--theme); color: #000; transform: scale(1.08); }
+    .btn-icon[title="Favourite"] { border-color: rgba(255,255,255,0.5); background: transparent; color: #fff; font-size: 18px; }
+    .btn-icon[title="Favourite"].faved { color: #ff4d6d; border-color: #ff4d6d; }
+    .btn-icon[title="Favourite"]:hover { background: rgba(255,255,255,0.08); transform: scale(1.08); }
 
     .pagination { display: flex; justify-content: center; align-items: center; gap: 8px; padding-top: 8px; }
     .page-btn { min-width: 38px; height: 38px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.55); border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all .2s; display: flex; align-items: center; justify-content: center; padding: 0 12px; }
@@ -366,7 +367,7 @@
             <div class="product-actions">
               <button class="btn-buy" onclick="event.stopPropagation();location.href='${url}'">BUY NOW</button>
               <button class="btn-icon" onclick="event.stopPropagation()" title="Add to Cart">🛒</button>
-              <button class="btn-icon" onclick="event.stopPropagation()" title="Favourite">❤</button>
+              <button class="btn-icon" onclick="event.stopPropagation();toggleFav(this)" title="Favourite">♡</button>
             </div>
           </div>
         </div>
@@ -526,6 +527,10 @@
       tip.classList.add('show');
       clearTimeout(tip._t);
       tip._t = setTimeout(() => tip.classList.remove('show'), 1500);
+    }
+    function toggleFav(btn) {
+      btn.classList.toggle('faved');
+      btn.textContent = btn.classList.contains('faved') ? '♥' : '♡';
     }
   </script>
 </body>
