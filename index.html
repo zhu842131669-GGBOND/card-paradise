@@ -597,6 +597,7 @@
       transition: background .2s, color .2s;
     }
     .lb-reset:hover { background: rgba(255,255,255,0.15); color: #fff; }
+    .lb-sheen { position: absolute; inset: 0; border-radius: 10px; pointer-events: none; mix-blend-mode: screen; opacity: 0; }
   </style>
 </head>
 <body>
@@ -880,8 +881,8 @@
     <button class="lb-close" id="lbClose">×</button>
     <div class="lb-scene">
       <div class="lb-card" id="lbCard">
-        <div class="lb-face lb-front"><img id="lbFrontImg" src="" alt="" /></div>
-        <div class="lb-face lb-back"><img id="lbBackImg" src="" alt="" /></div>
+        <div class="lb-face lb-front"><img id="lbFrontImg" src="" alt="" /><div class="lb-sheen"></div></div>
+        <div class="lb-face lb-back"><img id="lbBackImg" src="" alt="" /><div class="lb-sheen"></div></div>
       </div>
     </div>
     <div class="lb-info">
@@ -913,6 +914,20 @@
 
     function setTransform() {
       lbCard.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+      updateSheen();
+    }
+    function updateSheen(){
+      const ry=((rotY%360)+540)%360-180,rx=((rotX%360)+540)%360-180;
+      const ryR=ry*Math.PI/180,rxR=rx*Math.PI/180;
+      const lx=(Math.sin(ryR)*0.5+0.5)*100,ly=(-Math.sin(rxR)*0.5+0.5)*100;
+      const facing=Math.cos(rxR)*Math.cos(ryR);
+      const opacity=Math.sqrt(Math.max(0,1-facing*facing))*0.88;
+      const hue=((ry*1.5+rx*0.5)%360+360)%360,ang=135+ry*0.5;
+      const bg=[
+        `radial-gradient(ellipse 55% 75% at ${lx}% ${ly}%,rgba(255,255,255,0.55) 0%,transparent 55%)`,
+        `linear-gradient(${ang}deg,hsla(${hue},100%,65%,0.18),hsla(${(hue+60)%360},100%,65%,0.18),hsla(${(hue+120)%360},100%,65%,0.18),hsla(${(hue+180)%360},100%,65%,0.18),hsla(${(hue+240)%360},100%,65%,0.18),hsla(${(hue+300)%360},100%,65%,0.18))`
+      ].join(',');
+      document.querySelectorAll('.lb-sheen').forEach(el=>{el.style.opacity=opacity;el.style.background=bg;});
     }
 
     function resetRotation(animated) {
