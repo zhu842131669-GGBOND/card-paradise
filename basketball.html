@@ -344,13 +344,14 @@
       }
       document.getElementById('productGrid').innerHTML = items.map((c, i) => {
         const url = `product.html?cat=${CAT}&name=${encodeURIComponent(c.name)}&grade=${encodeURIComponent(c.grade)}&price=${encodeURIComponent(c.price)}&year=${encodeURIComponent(c.year||'')}&manufacturer=${encodeURIComponent(c.manufacturer||'')}&series=${encodeURIComponent(c.series||'')}&desc=${encodeURIComponent(c.desc)}&front=${encodeURIComponent(c.front)}&back=${encodeURIComponent(c.back)}`;
+        const safeUrl = url.replace(/'/g, '%27');
         return `
-        <div class="product-card" onclick="location.href='${url}'" style="cursor:pointer" onmouseleave="this.querySelector('.product-img').classList.remove('show-back');const b=this.querySelector('.overlay-btn-back');if(b)b.textContent='BACK PHOTO';">
+        <div class="product-card" onclick="location.href='${safeUrl}'" style="cursor:pointer" onmouseleave="this.querySelector('.product-img').classList.remove('show-back');const b=this.querySelector('.overlay-btn-back');if(b)b.textContent='BACK PHOTO';">
           <div class="product-img">
             <img class="card-img-front" src="${c.front}" alt="${c.name}" loading="lazy" />
             <img class="card-img-back"  src="${c.back}"  alt="${c.name}" loading="lazy" />
             <div class="img-overlay">
-              <button class="overlay-btn overlay-btn-detail" onclick="event.stopPropagation();location.href='${url}'">VIEW DETAILS</button>
+              <button class="overlay-btn overlay-btn-detail" onclick="event.stopPropagation();location.href='${safeUrl}'">VIEW DETAILS</button>
               <button class="overlay-btn overlay-btn-back" onclick="event.stopPropagation();togglePhoto(this)">BACK PHOTO</button>
             </div>
           </div>
@@ -359,10 +360,10 @@
               <span class="grade-badge ${getGradeClass(c.grade)}">${c.grade}</span>
               <span class="product-price">${c.price}</span>
             </div>
-            <a class="product-name product-link" href="${url}" onclick="event.stopPropagation()">${c.name}</a>
+            <a class="product-name product-link" href="${safeUrl}" onclick="event.stopPropagation()">${c.name}</a>
             <div class="product-desc">${c.desc}</div>
             <div class="product-actions">
-              <button class="btn-buy" onclick="event.stopPropagation();location.href='${url}'">BUY NOW</button>
+              <button class="btn-buy" onclick="event.stopPropagation();location.href='${safeUrl}'">BUY NOW</button>
               <button class="btn-icon" onclick="event.stopPropagation();toggleCart(this)" title="Add to Cart">🛒</button>
               <button class="btn-icon" onclick="event.stopPropagation();toggleFav(this)" title="Favourite">♡</button>
             </div>
