@@ -322,7 +322,8 @@
       if (!g.isRaw) {
         rows += row('是否评级 Graded',    'Yes');
         rows += row('评级公司 Company',   g.company || '—');
-        rows += row('评级分数 Score',     g.scoreDisplay || '—', g.score === 10 ? 'score-gold' : '');
+        const isGold = g.score === 10 || (g.scoreDisplay && g.scoreDisplay.trim().endsWith('10'));
+        rows += row('评级分数 Score',     g.scoreDisplay || '—', isGold ? 'score-gold' : '');
       }
       rows += `<tr>
         <td class="cit-label" style="padding-top:16px;">卡牌介绍<br>Introduction</td>
