@@ -165,6 +165,11 @@
     .btn-icon:hover { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); }
     .btn-icon[title="Add to Cart"] { border-color: var(--theme); background: var(--theme-dim); }
     .btn-icon[title="Add to Cart"]:hover { background: var(--theme); color: #000; transform: scale(1.08); }
+    .btn-icon[title="Add to Cart"].in-cart { border-color: #4ade80; background: rgba(74,222,128,0.15); color: #4ade80; }
+    @keyframes cartPop { 0%{transform:scale(1)} 40%{transform:scale(1.28) rotate(-8deg)} 70%{transform:scale(0.92) rotate(3deg)} 100%{transform:scale(1) rotate(0)} }
+    @keyframes floatUp { 0%{opacity:1;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-40px) scale(0.8)} }
+    .cart-pop { animation: cartPop 0.42s cubic-bezier(.36,.07,.19,.97); }
+    .cart-float { position:fixed; pointer-events:none; font-size:13px; font-weight:800; color:#4ade80; z-index:9999; animation:floatUp 0.65s ease-out forwards; }
     .btn-icon[title="Favourite"] { border-color: rgba(255,255,255,0.5); background: transparent; color: #fff; font-size: 18px; }
     .btn-icon[title="Favourite"].faved { color: #ff4d6d; border-color: #ff4d6d; }
     .btn-icon[title="Favourite"]:hover { background: rgba(255,255,255,0.08); transform: scale(1.08); }
@@ -365,7 +370,7 @@
             <div class="product-desc">${c.desc}</div>
             <div class="product-actions">
               <button class="btn-buy" onclick="event.stopPropagation();location.href='${url}'">BUY NOW</button>
-              <button class="btn-icon" onclick="event.stopPropagation()" title="Add to Cart">🛒</button>
+              <button class="btn-icon" onclick="event.stopPropagation();toggleCart(this)" title="Add to Cart">🛒</button>
               <button class="btn-icon" onclick="event.stopPropagation();toggleFav(this)" title="Favourite">♡</button>
             </div>
           </div>
@@ -530,6 +535,25 @@
     function toggleFav(btn) {
       btn.classList.toggle('faved');
       btn.textContent = btn.classList.contains('faved') ? '♥' : '♡';
+    }
+    function toggleCart(btn) {
+      if (btn.classList.contains('in-cart')) {
+        btn.classList.remove('in-cart');
+        btn.textContent = '🛒';
+      } else {
+        btn.classList.add('in-cart');
+        btn.textContent = '✓';
+        btn.classList.add('cart-pop');
+        btn.addEventListener('animationend', () => btn.classList.remove('cart-pop'), { once: true });
+        const r = btn.getBoundingClientRect();
+        const el = document.createElement('div');
+        el.className = 'cart-float';
+        el.textContent = '+1';
+        el.style.left = (r.left + r.width / 2 - 10) + 'px';
+        el.style.top = (r.top - 8) + 'px';
+        document.body.appendChild(el);
+        el.addEventListener('animationend', () => el.remove());
+      }
     }
   </script>
 </body>
