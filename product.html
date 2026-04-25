@@ -282,6 +282,7 @@
     const year         = params.get('year')         || '';
     const manufacturer = params.get('manufacturer') || '';
     const series       = params.get('series')       || '';
+    const fullTitle    = [year, manufacturer, series, name].filter(Boolean).join(' ');
 
     const CAT_MAP = {
       pokemon:    { label: 'Pokemon Cards',    href: 'pokemon.html',    theme: '#f9d923', dim: 'rgba(249,217,35,0.15)',  glow: 'rgba(249,217,35,0.25)',  nav: 'navPokemon' },
@@ -297,11 +298,11 @@
     document.documentElement.style.setProperty('--theme-glow', ci.glow);
     if (ci.nav) document.getElementById(ci.nav).classList.add('active');
 
-    document.title = `${name} | GGBOND CARD HABITAT`;
+    document.title = `${fullTitle} | GGBOND CARD HABITAT`;
     document.getElementById('breadCat').textContent = ci.label;
     document.getElementById('breadCat').href = ci.href;
     document.getElementById('breadName').textContent = name;
-    document.getElementById('detailName').textContent = name;
+    document.getElementById('detailName').textContent = fullTitle;
     document.getElementById('detailPrice').textContent = price;
     function parseGrade(gradeStr) {
       const raw = gradeStr.trim();
@@ -320,6 +321,7 @@
       rows += row('年份 Year',            year || '—');
       rows += row('卡牌商 Manufacturer',  manufacturer || '—');
       rows += row('卡牌系列 Series',      series || '—');
+      rows += row('名称 Name',            name   || '—');
       if (!g.isRaw) {
         rows += row('是否评级 Graded',    'Yes');
         rows += row('评级公司 Company',   g.company || '—');
