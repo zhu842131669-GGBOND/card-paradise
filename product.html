@@ -202,7 +202,7 @@
         </button>
       </li>
       <li>
-        <button class="nav-icon-btn" onclick="showNavTooltip(this,'COMING SOON')" title="Cart">
+        <button class="nav-icon-btn" onclick="location.href='cart.html'" title="Cart">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
             <path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.98-1.61L23 6H6"/>
@@ -271,6 +271,7 @@
     <button class="lb-reset" id="lbReset">Reset View</button>
   </div>
 
+  <script src="cart.js"></script>
   <script>
     const params = new URLSearchParams(window.location.search);
     const name         = params.get('name')         || 'Unknown Card';
@@ -399,9 +400,11 @@
       btn.textContent = btn.classList.contains('faved') ? '♥' : '♡';
     }
     function toggleCart(btn) {
+      const id = cat + '|' + front;
       if (btn.classList.contains('in-cart')) {
         btn.classList.remove('in-cart');
         btn.textContent = '🛒';
+        CartStore.remove(id);
       } else {
         btn.classList.add('in-cart');
         btn.textContent = '✓';
@@ -415,8 +418,17 @@
         el.style.top = (r.top - 8) + 'px';
         document.body.appendChild(el);
         el.addEventListener('animationend', () => el.remove());
+        CartStore.add({ id, fullTitle, name, grade, price, priceNum: parseFloat(price.replace(/[^0-9.]/g,''))||0, front, cat });
       }
     }
+    // Sync button state on load
+    (function() {
+      const id = cat + '|' + front;
+      if (CartStore.has(id)) {
+        const btn = document.querySelector('[title="Add to Cart"]');
+        if (btn) { btn.classList.add('in-cart'); btn.textContent = '✓'; }
+      }
+    })();
   </script>
 </body>
 </html>
