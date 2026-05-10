@@ -273,13 +273,6 @@
     .scan-progress-bar { height: 3px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
     .scan-progress-fill { height: 100%; background: var(--theme); border-radius: 2px; width: 0%; transition: width .15s; }
     .scan-progress-label { font-size: 11px; color: rgba(255,255,255,0.28); margin-top: 6px; text-align: center; }
-    .ocr-raw-wrap { display: none; margin-top: 10px; }
-    .ocr-raw-label { font-size: 10px; font-weight: 700; letter-spacing: 0.5px; color: rgba(255,255,255,0.28); margin-bottom: 6px; }
-    .ocr-raw-text {
-      width: 100%; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
-      border-radius: 8px; padding: 9px 12px; color: rgba(255,255,255,0.4); font-size: 11px;
-      font-family: inherit; resize: none; height: 56px; outline: none; line-height: 1.55;
-    }
     .form-divider {
       display: flex; align-items: center; gap: 10px; margin: 6px 0 12px;
       color: rgba(255,255,255,0.18); font-size: 10px; font-weight: 700; letter-spacing: 1px;
@@ -485,10 +478,6 @@
         <div class="scan-progress-wrap" id="scanProgressWrap">
           <div class="scan-progress-bar"><div class="scan-progress-fill" id="scanProgress"></div></div>
           <div class="scan-progress-label" id="scanProgressLabel">Reading front card...</div>
-        </div>
-        <div class="ocr-raw-wrap" id="ocrRawWrap">
-          <div class="ocr-raw-label">TEXT DETECTED — copy / reference to fill fields</div>
-          <textarea class="ocr-raw-text" id="ocrRawText" readonly></textarea>
         </div>
         <div class="form-divider">or fill manually</div>
 
@@ -716,7 +705,6 @@
       const ba = document.getElementById('backArea');
       fa.classList.remove('filled'); document.getElementById('frontImg').src = '';
       ba.classList.remove('filled'); document.getElementById('backImg').src  = '';
-      document.getElementById('ocrRawWrap').style.display      = 'none';
       document.getElementById('scanProgressWrap').style.display = 'none';
     }
 
@@ -844,8 +832,6 @@
 
       const area = document.getElementById('frontArea');
       const imgEl = document.getElementById('frontImg');
-      document.getElementById('ocrRawWrap').style.display = 'none';
-
       // Show progress
       const prog = document.getElementById('scanProgressWrap');
       prog.style.display = 'block';
@@ -953,7 +939,7 @@
       }
 
       // ── Card Name ─────────────────────────────────────────────────
-      // English: Title-Case proper-noun lines (2–5 words)
+      // English only: Title-Case proper-noun lines (2–5 words)
       const enNames = lines.filter(line => {
         if (line.length < 4 || line.length > 50) return false;
         if (/^\d[\d\s]*$/.test(line)) return false;
@@ -962,21 +948,8 @@
         return words.every(w => /^[A-Z][a-zA-Z'\-]+$/.test(w) || /^[A-Z]{2,6}$/.test(w));
       });
       enNames.sort((a, b) => b.length - a.length);
+      if (enNames[0]) setFieldFromScan('fName', enNames[0]);
 
-      // Japanese: lines that are mostly kana/kanji, 2–15 chars
-      const jpNames = lines.filter(line => {
-        if (line.length < 2 || line.length > 20) return false;
-        const jpChars = (line.match(/[぀-鿿]/g) || []).length;
-        return jpChars >= 2 && jpChars / line.length > 0.5;
-      });
-      jpNames.sort((a, b) => b.length - a.length);
-
-      const bestName = enNames[0] || jpNames[0] || '';
-      if (bestName) setFieldFromScan('fName', bestName);
-
-      // ── Raw text reference ────────────────────────────────────────
-      document.getElementById('ocrRawText').value = lines.join(' ').trim();
-      document.getElementById('ocrRawWrap').style.display = 'block';
       showToast('Scan complete — fields auto-filled', '📷');
     }
 
