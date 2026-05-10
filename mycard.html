@@ -121,15 +121,18 @@
       box-shadow: 0 12px 48px rgba(129,140,248,0.12);
       transform: translateY(-3px);
     }
-    .col-card-delete {
-      position: absolute; top: 10px; right: 10px; z-index: 2;
+    .col-card-delete, .col-card-edit {
+      position: absolute; top: 10px; z-index: 2;
       width: 26px; height: 26px; border-radius: 50%;
       background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.12);
       color: rgba(255,255,255,0.45); font-size: 14px; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
       transition: all .2s; line-height: 1;
     }
+    .col-card-delete { right: 10px; }
     .col-card-delete:hover { background: rgba(255,107,107,0.2); border-color: #ff6b6b; color: #ff6b6b; }
+    .col-card-edit { left: 10px; font-size: 13px; }
+    .col-card-edit:hover { background: rgba(129,140,248,0.2); border-color: #818cf8; color: #818cf8; }
     .col-card-img {
       width: 100%; aspect-ratio: 3/2; overflow: hidden; background: #0d0d14;
     }
@@ -527,6 +530,7 @@
   <script>
     let currentFilter = '';
     let toastTimer;
+    let editingId = null;
 
     const CAT_LABELS = {
       basketball: 'Basketball', soccer: 'Soccer', pokemon: 'Pokemon', kpop: 'K-POP', others: 'Others'
@@ -564,6 +568,7 @@
         : `<div class="col-card-initials">${initials}</div>`;
 
       return `<div class="col-card" data-id="${item.id}">
+        <button class="col-card-edit" onclick="editCard('${item.id}')" title="Edit">✎</button>
         <button class="col-card-delete" onclick="deleteCard('${item.id}')" title="Remove">×</button>
         <div class="col-card-img">${imgHtml}</div>
         <div class="col-card-body">
@@ -640,8 +645,11 @@
       if (!name) { showToast('Card name is required', '⚠️'); highlightError('fName'); return; }
       if (!cat)  { showToast('Please select a category', '⚠️'); highlightError('fCategory'); return; }
 
-      CardStore.add({
-        id:           String(Date.now()),
+      const isEdit = !!editingId;
+      const existing = isEdit ? CardStore.get().find(c => c.id === editingId) : null;
+
+      const card = {
+        id:           isEdit ? editingId : String(Date.now()),
         name,
         certNo:       document.getElementById('fCertNo').value.trim(),
         year:         document.getElementById('fYear').value.trim(),
@@ -650,16 +658,24 @@
         grade:        document.getElementById('fGrade').value.trim(),
         buyPrice:     parseFloat(document.getElementById('fBuyPrice').value) || 0,
         currentValue: parseFloat(document.getElementById('fCurrentValue').value) || 0,
-        notes:    document.getElementById('fNotes').value.trim(),
-        frontImg: pendingFrontImg || '',
-        addedAt:  new Date().toISOString(),
-      });
+        notes:        document.getElementById('fNotes').value.trim(),
+        frontImg:     pendingFrontImg || '',
+        addedAt:      isEdit && existing ? existing.addedAt : new Date().toISOString(),
+      };
+
+      if (isEdit) CardStore.remove(editingId);
+      CardStore.add(card);
 
       closeAddModal();
       resetForm();
       renderAll();
-      launchConfetti();
-      showCelebration();
+
+      if (isEdit) {
+        showToast('Card updated', '✓');
+      } else {
+        launchConfetti();
+        showCelebration();
+      }
     }
 
     function deleteCard(id) {
@@ -668,10 +684,45 @@
       showToast('Card removed', '🗑');
     }
 
-    function openAddModal()  { document.getElementById('addModal').classList.add('open'); }
-    function closeAddModal() { document.getElementById('addModal').classList.remove('open'); }
+    function editCard(id) {
+      const item = CardStore.get().find(c => c.id === id);
+      if (!item) return;
+      editingId = id;
+      // populate form
+      document.getElementById('fCertNo').value       = item.certNo       || '';
+      document.getElementById('fName').value         = item.name         || '';
+      document.getElementById('fYear').value         = item.year         || '';
+      document.getElementById('fSeries').value       = item.series       || '';
+      document.getElementById('fCategory').value     = item.category     || '';
+      document.getElementById('fGrade').value        = item.grade        || '';
+      document.getElementById('fBuyPrice').value     = item.buyPrice     || '';
+      document.getElementById('fCurrentValue').value = item.currentValue || '';
+      document.getElementById('fNotes').value        = item.notes        || '';
+      // restore slab photo
+      pendingFrontImg = item.frontImg || null;
+      const fa = document.getElementById('frontArea');
+      const fi = document.getElementById('frontImg');
+      if (item.frontImg) { fi.src = item.frontImg; fa.classList.add('filled'); }
+      else               { fi.src = '';            fa.classList.remove('filled'); }
+      // update modal header & button
+      document.querySelector('#addModal h2').textContent = 'Edit Card';
+      document.querySelector('.btn-save').textContent    = 'Save Changes';
+      document.getElementById('addModal').classList.add('open');
+    }
+
+    function openAddModal() {
+      editingId = null;
+      document.querySelector('#addModal h2').textContent = 'Add Card to Collection';
+      document.querySelector('.btn-save').textContent    = 'Add to Collection';
+      document.getElementById('addModal').classList.add('open');
+    }
+    function closeAddModal() {
+      editingId = null;
+      document.getElementById('addModal').classList.remove('open');
+    }
 
     function resetForm() {
+      editingId = null;
       ['fCertNo','fName','fYear','fSeries','fGrade','fNotes'].forEach(id => {
         document.getElementById(id).value = '';
       });
