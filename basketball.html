@@ -190,12 +190,13 @@
     /* HAMBURGER / MOBILE NAV */
     .nav-hamburger {
       display: flex; flex-direction: column; gap: 5px;
-      background: none; border: none; cursor: pointer; padding: 6px; margin-left: 8px;
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 8px; cursor: pointer; padding: 7px 8px; margin-left: 8px;
     }
     @media (min-width: 769px) { .nav-hamburger { display: none; } }
     .nav-hamburger span {
       display: block; width: 22px; height: 2px;
-      background: rgba(255,255,255,0.7); border-radius: 2px; transition: all .22s;
+      background: linear-gradient(90deg, #f9d923, #ff6b6b, #4ecdc4); border-radius: 2px; transition: all .22s;
     }
     .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
     .nav-hamburger.open span:nth-child(2) { opacity: 0; }
