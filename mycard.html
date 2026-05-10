@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Collection | GGBOND CARD HABITAT</title>
+  <style>
+    :root { --theme: #818cf8; --theme-dim: rgba(129,140,248,0.12); --theme-glow: rgba(129,140,248,0.22); }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', sans-serif; background: #0a0a0f; color: #fff; min-height: 100vh; display: flex; flex-direction: column; }
+
+    /* NAV */
+    nav {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 18px 60px; background: rgba(255,255,255,0.04); backdrop-filter: blur(10px);
+      position: sticky; top: 0; z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .logo {
+      font-size: 22px; font-weight: 800; letter-spacing: 1px;
+      background: linear-gradient(90deg, #f9d923, #ff6b6b, #4ecdc4);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none;
+    }
+    nav ul { list-style: none; display: flex; gap: 8px; align-items: center; }
+    nav ul a {
+      color: rgba(255,255,255,0.65); text-decoration: none; font-size: 12px; font-weight: 700;
+      letter-spacing: 1px; padding: 7px 16px; border-radius: 20px; border: 1px solid transparent; transition: all .2s;
+    }
+    nav ul a:hover { color: #fff; background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); }
+    nav ul a.active { color: var(--theme); border-color: var(--theme-dim); background: var(--theme-dim); }
+    .nav-divider { width: 1px; height: 16px; background: rgba(255,255,255,0.12); margin: 0 4px; }
+    .nav-icon-btn {
+      position: relative; display: flex; align-items: center; justify-content: center;
+      width: 34px; height: 34px; border-radius: 50%; border: 1px solid transparent;
+      background: none; cursor: pointer; color: rgba(255,255,255,0.65); transition: all .2s; padding: 0;
+    }
+    .nav-icon-btn:hover { color: #fff; background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); }
+    .nav-icon-btn svg { width: 17px; height: 17px; }
+    .cart-badge {
+      position: absolute; top: 1px; right: 1px; width: 13px; height: 13px; background: #ff6b6b;
+      border-radius: 50%; font-size: 8px; font-weight: 800; color: #fff;
+      display: flex; align-items: center; justify-content: center; line-height: 1; pointer-events: none;
+    }
+
+    /* HERO */
+    .hero {
+      padding: 60px 60px 40px;
+      background: radial-gradient(ellipse at 50% 0%, rgba(129,140,248,0.10) 0%, transparent 65%);
+    }
+    .hero h1 {
+      font-size: clamp(32px, 5vw, 56px); font-weight: 900; letter-spacing: 1px; line-height: 1.1; margin-bottom: 10px;
+    }
+    .hero h1 span {
+      background: linear-gradient(90deg, #818cf8, #a78bfa, #c4b5fd);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .hero p { font-size: 15px; color: rgba(255,255,255,0.38); }
+
+    /* STATS */
+    .stats-bar {
+      display: flex; gap: 16px; padding: 0 60px 40px; flex-wrap: wrap;
+    }
+    .stat-pill {
+      flex: 1; min-width: 160px; background: #111118;
+      border: 1px solid rgba(129,140,248,0.15); border-radius: 16px; padding: 22px 24px; text-align: center;
+      transition: border-color .2s;
+    }
+    .stat-pill:hover { border-color: rgba(129,140,248,0.35); }
+    .stat-val {
+      font-size: clamp(22px, 3vw, 36px); font-weight: 900; line-height: 1;
+      background: linear-gradient(90deg, #818cf8, #c4b5fd);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .stat-lbl { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; color: rgba(255,255,255,0.3); }
+
+    /* CONTROLS */
+    .controls-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 60px 24px; gap: 16px; flex-wrap: wrap;
+    }
+    .filter-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+    .filter-pill {
+      padding: 7px 16px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);
+      background: none; color: rgba(255,255,255,0.45); font-size: 11px; font-weight: 700;
+      letter-spacing: 1px; cursor: pointer; transition: all .2s;
+    }
+    .filter-pill:hover { color: #fff; border-color: rgba(255,255,255,0.25); background: rgba(255,255,255,0.06); }
+    .filter-pill.active { color: var(--theme); border-color: var(--theme-dim); background: var(--theme-dim); }
+    .btn-add-card {
+      padding: 10px 22px; border-radius: 22px; border: none;
+      background: var(--theme); color: #000; font-size: 12px; font-weight: 800;
+      letter-spacing: 0.5px; cursor: pointer; transition: opacity .2s, transform .15s; white-space: nowrap;
+    }
+    .btn-add-card:hover { opacity: 0.88; transform: scale(0.98); }
+
+    /* COLLECTION GRID */
+    .collection-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px; padding: 0 60px 80px;
+    }
+
+    /* EMPTY STATE */
+    .collection-empty {
+      display: none; flex-direction: column; align-items: center; justify-content: center;
+      padding: 80px 40px; margin: 0 60px 80px;
+      background: #111118; border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 20px; text-align: center;
+    }
+    .empty-icon { font-size: 64px; margin-bottom: 20px; opacity: 0.25; }
+    .collection-empty h3 { font-size: 20px; font-weight: 800; color: rgba(255,255,255,0.45); margin-bottom: 8px; }
+    .collection-empty p { font-size: 14px; color: rgba(255,255,255,0.25); margin-bottom: 28px; line-height: 1.6; }
+
+    /* CARD */
+    .col-card {
+      background: #111118; border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 16px; overflow: hidden; position: relative;
+      transition: border-color .25s, box-shadow .25s, transform .25s;
+    }
+    .col-card:hover {
+      border-color: rgba(129,140,248,0.35);
+      box-shadow: 0 12px 48px rgba(129,140,248,0.12);
+      transform: translateY(-3px);
+    }
+    .col-card-delete {
+      position: absolute; top: 10px; right: 10px; z-index: 2;
+      width: 26px; height: 26px; border-radius: 50%;
+      background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.45); font-size: 14px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all .2s; line-height: 1;
+    }
+    .col-card-delete:hover { background: rgba(255,107,107,0.2); border-color: #ff6b6b; color: #ff6b6b; }
+    .col-card-img {
+      width: 100%; aspect-ratio: 3/2; overflow: hidden; background: #0d0d14;
+    }
+    .col-card-img img { width: 100%; height: 100%; object-fit: contain; display: block; }
+    .col-card-initials {
+      width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+      font-size: 36px; font-weight: 900; color: var(--theme); letter-spacing: 3px;
+      background: linear-gradient(135deg, #0e0e1a, #16162e);
+    }
+    .col-card-body { padding: 16px; }
+    .col-card-name { font-size: 14px; font-weight: 800; color: #fff; margin-bottom: 4px; line-height: 1.4; }
+    .col-card-sub { font-size: 12px; color: rgba(255,255,255,0.35); margin-bottom: 10px; }
+    .col-card-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+    .badge-cat {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
+      padding: 3px 9px; border-radius: 10px;
+    }
+    .badge-basketball { background: rgba(255,107,107,0.15); color: #ff6b6b; }
+    .badge-soccer     { background: rgba(100,220,80,0.15);  color: #64dc50; }
+    .badge-pokemon    { background: rgba(249,217,35,0.15);  color: #f9d923; }
+    .badge-kpop       { background: rgba(92,230,212,0.15);  color: #5CE6D4; }
+    .badge-others     { background: rgba(78,205,196,0.15);  color: #4ecdc4; }
+    .badge-grade {
+      font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 10px;
+      background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.55);
+    }
+    .col-card-prices { margin-bottom: 12px; display: flex; flex-direction: column; gap: 4px; }
+    .price-row { display: flex; justify-content: space-between; align-items: center; }
+    .price-label { font-size: 11px; color: rgba(255,255,255,0.3); font-weight: 600; }
+    .price-val { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.8); }
+    .price-val.profit { color: #4ade80; }
+    .price-val.loss   { color: #ff6b6b; }
+    .price-val.breakeven { color: rgba(255,255,255,0.3); }
+    .col-card-actions { display: flex; gap: 8px; }
+    .btn-search {
+      flex: 1; padding: 8px 10px; border-radius: 8px; font-size: 11px; font-weight: 700;
+      letter-spacing: 0.3px; text-decoration: none; text-align: center;
+      transition: opacity .2s, transform .15s; display: block;
+    }
+    .btn-search:hover { opacity: 0.8; transform: scale(0.97); }
+    .btn-katao { background: rgba(255,80,50,0.12); border: 1px solid rgba(255,80,50,0.3); color: #ff7a5c; }
+    .btn-ebay  { background: rgba(0,120,255,0.1);  border: 1px solid rgba(0,120,255,0.25); color: #5a9fff; }
+    .col-card-notes {
+      margin-top: 10px; font-size: 11px; color: rgba(255,255,255,0.25);
+      border-top: 1px solid rgba(255,255,255,0.06); padding-top: 10px; line-height: 1.5;
+    }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center; z-index: 500;
+      opacity: 0; pointer-events: none; transition: opacity .25s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: auto; }
+    .modal-box {
+      background: #141420; border: 1px solid rgba(129,140,248,0.25);
+      border-radius: 20px; max-width: 520px; width: 92%; max-height: 88vh;
+      display: flex; flex-direction: column;
+      box-shadow: 0 0 60px rgba(129,140,248,0.10);
+      transform: scale(0.92); transition: transform .25s;
+    }
+    .modal-overlay.open .modal-box { transform: scale(1); }
+    .modal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 24px 28px 0; flex-shrink: 0;
+    }
+    .modal-header h2 { font-size: 20px; font-weight: 900; }
+    .modal-close {
+      width: 30px; height: 30px; border-radius: 50%; background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.5);
+      font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: all .2s; line-height: 1;
+    }
+    .modal-close:hover { background: rgba(255,107,107,0.15); border-color: #ff6b6b; color: #ff6b6b; }
+    .form-scroll { flex: 1; overflow-y: auto; padding: 24px 28px; }
+    .form-scroll::-webkit-scrollbar { width: 4px; }
+    .form-scroll::-webkit-scrollbar-track { background: transparent; }
+    .form-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+    .form-group { margin-bottom: 16px; }
+    .form-label {
+      display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+      color: rgba(255,255,255,0.4); margin-bottom: 7px;
+    }
+    .form-input {
+      width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px; padding: 12px 14px; color: #fff; font-size: 14px;
+      outline: none; transition: border-color .2s, box-shadow .2s; font-family: inherit;
+    }
+    .form-input::placeholder { color: rgba(255,255,255,0.18); }
+    .form-input:focus { border-color: var(--theme); box-shadow: 0 0 0 3px var(--theme-dim); }
+    .form-input.error { border-color: #ff6b6b; box-shadow: 0 0 0 3px rgba(255,107,107,0.15); }
+    select.form-input { background: #1a1a2a; }
+    select.form-input option { background: #1a1a2a; color: #fff; }
+    .form-textarea { resize: vertical; min-height: 72px; }
+    .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .modal-footer {
+      display: flex; gap: 10px; padding: 16px 28px 24px; flex-shrink: 0;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .btn-cancel {
+      flex: 1; padding: 12px; background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 10px;
+      color: rgba(255,255,255,0.55); font-size: 13px; font-weight: 700; cursor: pointer; transition: all .2s;
+    }
+    .btn-cancel:hover { background: rgba(255,255,255,0.1); color: #fff; }
+    .btn-save {
+      flex: 2; padding: 12px; background: var(--theme); border: none; border-radius: 10px;
+      color: #000; font-size: 13px; font-weight: 900; cursor: pointer; transition: opacity .2s, transform .15s;
+    }
+    .btn-save:hover { opacity: 0.88; transform: scale(0.98); }
+
+    /* SCAN */
+    .scan-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 6px; }
+    .scan-slot { display: flex; flex-direction: column; gap: 6px; }
+    .scan-slot-lbl {
+      font-size: 10px; font-weight: 700; letter-spacing: 1.2px;
+      color: rgba(255,255,255,0.28); text-align: center;
+    }
+    .scan-area {
+      aspect-ratio: 5/7; border-radius: 10px; overflow: hidden; position: relative;
+      border: 1.5px dashed rgba(129,140,248,0.3); background: rgba(129,140,248,0.04);
+      cursor: pointer; transition: border-color .2s, background .2s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .scan-area:hover { border-color: rgba(129,140,248,0.55); background: rgba(129,140,248,0.09); }
+    .scan-area.filled { border-style: solid; border-color: rgba(129,140,248,0.45); }
+    .scan-area img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+    .scan-placeholder { display: flex; flex-direction: column; align-items: center; gap: 5px; pointer-events: none; }
+    .scan-area.filled .scan-placeholder { display: none; }
+    .scan-placeholder-icon { color: rgba(129,140,248,0.38); }
+    .scan-placeholder-text { font-size: 10px; font-weight: 700; letter-spacing: 0.5px; color: rgba(255,255,255,0.22); }
+    .scan-retake {
+      position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%);
+      background: rgba(0,0,0,0.72); border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 6px; padding: 3px 9px; font-size: 10px; font-weight: 700;
+      color: rgba(255,255,255,0.55); white-space: nowrap; display: none; pointer-events: none;
+    }
+    .scan-area.filled .scan-retake { display: block; }
+    .scan-hint { font-size: 11px; color: rgba(255,255,255,0.2); text-align: center; margin-top: 2px; }
+    .scan-progress-wrap { display: none; margin-top: 10px; }
+    .scan-progress-bar { height: 3px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
+    .scan-progress-fill { height: 100%; background: var(--theme); border-radius: 2px; width: 0%; transition: width .15s; }
+    .scan-progress-label { font-size: 11px; color: rgba(255,255,255,0.28); margin-top: 6px; text-align: center; }
+    .ocr-raw-wrap { display: none; margin-top: 10px; }
+    .ocr-raw-label { font-size: 10px; font-weight: 700; letter-spacing: 0.5px; color: rgba(255,255,255,0.28); margin-bottom: 6px; }
+    .ocr-raw-text {
+      width: 100%; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 8px; padding: 9px 12px; color: rgba(255,255,255,0.4); font-size: 11px;
+      font-family: inherit; resize: none; height: 56px; outline: none; line-height: 1.55;
+    }
+    .form-divider {
+      display: flex; align-items: center; gap: 10px; margin: 6px 0 12px;
+      color: rgba(255,255,255,0.18); font-size: 10px; font-weight: 700; letter-spacing: 1px;
+    }
+    .form-divider::before, .form-divider::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.07); }
+    .form-input.autofilled { border-color: rgba(129,140,248,0.5); background: rgba(129,140,248,0.07); }
+
+    /* TOAST */
+    .toast {
+      position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: #1e1e2e; border: 1px solid rgba(129,140,248,0.3);
+      color: #fff; font-size: 13px; font-weight: 600;
+      padding: 14px 24px; border-radius: 14px; z-index: 9999;
+      white-space: nowrap; opacity: 0; transition: opacity .25s, transform .25s;
+      pointer-events: none; box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast-icon { font-size: 16px; }
+
+    footer {
+      text-align: center; padding: 28px; font-size: 12px;
+      color: rgba(255,255,255,0.18); border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    @media (max-width: 768px) {
+      nav { padding: 16px 20px; }
+      nav ul { display: none; }
+      .hero { padding: 40px 20px 28px; }
+      .stats-bar { padding: 0 20px 28px; }
+      .controls-row { padding: 0 20px 18px; }
+      .collection-grid { padding: 0 20px 60px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+      .collection-empty { margin: 0 20px 60px; }
+    }
+    @media (max-width: 500px) {
+      .collection-grid { grid-template-columns: 1fr; }
+      .form-row-2 { grid-template-columns: 1fr; }
+      .stats-bar { gap: 10px; }
+      .stat-pill { min-width: 130px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="logo">GGBOND CARD HABITAT</a>
+    <ul>
+      <li><a href="index.html">HOME</a></li>
+      <li><a href="mycard.html" class="active">MY CARD</a></li>
+      <li><a href="pokemon.html">POKEMON</a></li>
+      <li><a href="basketball.html">BASKETBALL</a></li>
+      <li><a href="soccer.html">SOCCER</a></li>
+      <li><a href="kpop.html">K-POP</a></li>
+      <li><a href="others.html">OTHERS</a></li>
+      <li class="nav-divider"></li>
+      <li><a href="index.html#why">ABOUT US</a></li>
+      <li><a href="index.html#contact">CONTACT US</a></li>
+      <li class="nav-divider"></li>
+      <li>
+        <button class="nav-icon-btn" onclick="location.href='account.html'" title="Account">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 10-16 0"/>
+          </svg>
+        </button>
+      </li>
+      <li>
+        <button class="nav-icon-btn" onclick="location.href='cart.html'" title="Cart">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+            <path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.98-1.61L23 6H6"/>
+          </svg>
+          <span class="cart-badge">0</span>
+        </button>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <h1>MY CARD <span>COLLECTION</span></h1>
+    <p>Track your cards. Know your portfolio.</p>
+  </div>
+
+  <!-- STATS DASHBOARD -->
+  <div class="stats-bar">
+    <div class="stat-pill">
+      <div class="stat-val" id="statTotal">0</div>
+      <div class="stat-lbl">TOTAL CARDS</div>
+    </div>
+    <div class="stat-pill">
+      <div class="stat-val" id="statValue">$0</div>
+      <div class="stat-lbl">ESTIMATED VALUE</div>
+    </div>
+    <div class="stat-pill">
+      <div class="stat-val" id="statTopCard">—</div>
+      <div class="stat-lbl">HIGHEST VALUE</div>
+    </div>
+    <div class="stat-pill">
+      <div class="stat-val" id="statTopCat">—</div>
+      <div class="stat-lbl">MOST CARDS</div>
+    </div>
+  </div>
+
+  <!-- CONTROLS -->
+  <div class="controls-row">
+    <div class="filter-pills">
+      <button class="filter-pill active" data-cat="">ALL</button>
+      <button class="filter-pill" data-cat="basketball">BASKETBALL</button>
+      <button class="filter-pill" data-cat="soccer">SOCCER</button>
+      <button class="filter-pill" data-cat="pokemon">POKEMON</button>
+      <button class="filter-pill" data-cat="kpop">K-POP</button>
+      <button class="filter-pill" data-cat="others">OTHERS</button>
+    </div>
+    <button class="btn-add-card" onclick="openAddModal()">+ ADD CARD</button>
+  </div>
+
+  <!-- COLLECTION GRID -->
+  <div class="collection-grid" id="collectionGrid"></div>
+
+  <!-- EMPTY STATE -->
+  <div class="collection-empty" id="collectionEmpty">
+    <div class="empty-icon">🃏</div>
+    <h3 id="emptyTitle">No cards yet</h3>
+    <p id="emptyMsg">Start tracking your collection by adding your first card.</p>
+    <button class="btn-add-card" onclick="openAddModal()">+ ADD YOUR FIRST CARD</button>
+  </div>
+
+  <!-- ADD CARD MODAL -->
+  <div class="modal-overlay" id="addModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2>Add Card to Collection</h2>
+        <button class="modal-close" onclick="closeAddModal()">×</button>
+      </div>
+      <div class="form-scroll">
+
+        <!-- SCAN SECTION -->
+        <input type="file" id="frontImgInput" accept="image/*" capture="environment" style="display:none" />
+        <input type="file" id="backImgInput"  accept="image/*" capture="environment" style="display:none" />
+
+        <div class="scan-cols">
+          <!-- FRONT -->
+          <div class="scan-slot">
+            <div class="scan-slot-lbl">FRONT</div>
+            <div class="scan-area" id="frontArea" onclick="document.getElementById('frontImgInput').click()">
+              <img id="frontImg" src="" alt="Front" />
+              <div class="scan-placeholder">
+                <svg class="scan-placeholder-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
+                  <circle cx="12" cy="13" r="4"/>
+                </svg>
+                <span class="scan-placeholder-text">TAP TO SCAN</span>
+              </div>
+              <span class="scan-retake">Retake</span>
+            </div>
+          </div>
+          <!-- BACK -->
+          <div class="scan-slot">
+            <div class="scan-slot-lbl">BACK</div>
+            <div class="scan-area" id="backArea" onclick="document.getElementById('backImgInput').click()">
+              <img id="backImg" src="" alt="Back" />
+              <div class="scan-placeholder">
+                <svg class="scan-placeholder-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
+                  <circle cx="12" cy="13" r="4"/>
+                </svg>
+                <span class="scan-placeholder-text">TAP TO SCAN</span>
+              </div>
+              <span class="scan-retake">Retake</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="scan-hint">Front photo = card cover &nbsp;·&nbsp; Auto-fills fields from front image</div>
+        <div class="scan-progress-wrap" id="scanProgressWrap">
+          <div class="scan-progress-bar"><div class="scan-progress-fill" id="scanProgress"></div></div>
+          <div class="scan-progress-label" id="scanProgressLabel">Reading front card...</div>
+        </div>
+        <div class="ocr-raw-wrap" id="ocrRawWrap">
+          <div class="ocr-raw-label">TEXT DETECTED — copy / reference to fill fields</div>
+          <textarea class="ocr-raw-text" id="ocrRawText" readonly></textarea>
+        </div>
+        <div class="form-divider">or fill manually</div>
+
+        <div class="form-group">
+          <label class="form-label">CARD NAME *</label>
+          <input id="fName" class="form-input" type="text" placeholder="e.g. 2021 Panini Prizm Luka Doncic" />
+        </div>
+        <div class="form-row-2">
+          <div class="form-group">
+            <label class="form-label">YEAR</label>
+            <input id="fYear" class="form-input" type="number" placeholder="2021" min="1950" max="2099" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">SERIES</label>
+            <input id="fSeries" class="form-input" type="text" placeholder="Panini Prizm" />
+          </div>
+        </div>
+        <div class="form-row-2">
+          <div class="form-group">
+            <label class="form-label">CATEGORY *</label>
+            <select id="fCategory" class="form-input">
+              <option value="">Select...</option>
+              <option value="basketball">Basketball</option>
+              <option value="soccer">Soccer</option>
+              <option value="pokemon">Pokemon</option>
+              <option value="kpop">K-POP</option>
+              <option value="others">Others</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">GRADE / CONDITION</label>
+            <input id="fGrade" class="form-input" type="text" placeholder="PSA 10, Raw NM..." />
+          </div>
+        </div>
+        <div class="form-row-2">
+          <div class="form-group">
+            <label class="form-label">PURCHASE PRICE (AUD $)</label>
+            <input id="fBuyPrice" class="form-input" type="number" placeholder="0.00" min="0" step="0.01" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">EST. CURRENT VALUE (AUD $)</label>
+            <input id="fCurrentValue" class="form-input" type="number" placeholder="0.00" min="0" step="0.01" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">NOTES (OPTIONAL)</label>
+          <textarea id="fNotes" class="form-input form-textarea" placeholder="Where you bought it, serial #, condition notes..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeAddModal()">Cancel</button>
+        <button class="btn-save" onclick="saveCard()">Add to Collection</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast">
+    <span class="toast-icon" id="toastIcon">✓</span>
+    <span id="toastMsg">Card added!</span>
+  </div>
+
+  <footer>© 2025 GGBOND CARD HABITAT. All rights reserved.</footer>
+
+  <script src="cart.js"></script>
+  <script src="mycard.js"></script>
+  <script>
+    let currentFilter = '';
+    let toastTimer;
+
+    const CAT_LABELS = {
+      basketball: 'Basketball', soccer: 'Soccer', pokemon: 'Pokemon', kpop: 'K-POP', others: 'Others'
+    };
+
+    function kataoUrl(name) {
+      return 'https://www.katao.com/search?keyword=' + encodeURIComponent(name);
+    }
+    function ebayUrl(name) {
+      return 'https://www.ebay.com/sch/i.html?_nkw=' + encodeURIComponent(name) + '&LH_Sold=1&LH_Complete=1';
+    }
+
+    function getInitials(name) {
+      const words = name.trim().split(/\s+/).filter(w => /[A-Za-z一-龥]/.test(w));
+      if (!words.length) return '🃏';
+      return words.slice(-2).map(w => w[0].toUpperCase()).join('');
+    }
+
+    function fmtMoney(n) {
+      return '$' + Number(n).toLocaleString('en-AU', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    }
+
+    function cardHTML(item) {
+      const buy  = parseFloat(item.buyPrice)     || 0;
+      const val  = parseFloat(item.currentValue) || 0;
+      const diff = val - buy;
+      const pct  = buy > 0 ? ((diff / buy) * 100).toFixed(1) : null;
+      const plClass = diff > 0 ? 'profit' : diff < 0 ? 'loss' : 'breakeven';
+      const plText  = (buy === 0 && val === 0) ? '—'
+        : diff === 0 ? 'Break even'
+        : (diff > 0 ? '+' : '') + fmtMoney(Math.abs(diff)) + (pct !== null ? ` (${diff > 0 ? '+' : ''}${pct}%)` : '');
+      const initials = getInitials(item.name);
+      const imgHtml = item.frontImg
+        ? `<img src="${item.frontImg}" alt="${item.name.replace(/"/g,'&quot;')}" loading="lazy" />`
+        : `<div class="col-card-initials">${initials}</div>`;
+
+      return `<div class="col-card" data-id="${item.id}">
+        <button class="col-card-delete" onclick="deleteCard('${item.id}')" title="Remove">×</button>
+        <div class="col-card-img">${imgHtml}</div>
+        <div class="col-card-body">
+          <div class="col-card-name">${item.name}</div>
+          <div class="col-card-sub">${[item.year, item.series].filter(Boolean).join(' · ')}</div>
+          <div class="col-card-badges">
+            <span class="badge-cat badge-${item.category}">${CAT_LABELS[item.category] || item.category}</span>
+            ${item.grade ? `<span class="badge-grade">${item.grade}</span>` : ''}
+          </div>
+          <div class="col-card-prices">
+            <div class="price-row"><span class="price-label">Cost</span><span class="price-val">${fmtMoney(buy)}</span></div>
+            <div class="price-row"><span class="price-label">Value</span><span class="price-val">${fmtMoney(val)}</span></div>
+            <div class="price-row"><span class="price-label">P/L</span><span class="price-val ${plClass}">${plText}</span></div>
+          </div>
+          <div class="col-card-actions">
+            <a href="${kataoUrl(item.name)}" target="_blank" rel="noopener" class="btn-search btn-katao">查卡淘</a>
+            <a href="${ebayUrl(item.name)}" target="_blank" rel="noopener" class="btn-search btn-ebay">查eBay</a>
+          </div>
+          ${item.notes ? `<div class="col-card-notes">${item.notes}</div>` : ''}
+        </div>
+      </div>`;
+    }
+
+    function updateStats(items) {
+      document.getElementById('statTotal').textContent = items.length;
+      const totalVal = items.reduce((s, i) => s + (parseFloat(i.currentValue) || 0), 0);
+      document.getElementById('statValue').textContent = fmtMoney(totalVal);
+      const top = CardStore.topByValue();
+      const topEl = document.getElementById('statTopCard');
+      if (top && (parseFloat(top.currentValue) || 0) > 0) {
+        topEl.textContent = fmtMoney(parseFloat(top.currentValue));
+      } else {
+        topEl.textContent = '—';
+      }
+      const topCat = CardStore.topCategory();
+      document.getElementById('statTopCat').textContent = topCat ? (CAT_LABELS[topCat] || topCat) : '—';
+    }
+
+    function renderGrid(filtered, allItems) {
+      const grid  = document.getElementById('collectionGrid');
+      const empty = document.getElementById('collectionEmpty');
+      const addBtn = empty.querySelector('.btn-add-card');
+
+      if (!allItems.length) {
+        grid.innerHTML = '';
+        document.getElementById('emptyTitle').textContent = 'No cards yet';
+        document.getElementById('emptyMsg').textContent = 'Start tracking your collection by adding your first card.';
+        addBtn.style.display = '';
+        empty.style.display = 'flex';
+        return;
+      }
+      if (!filtered.length) {
+        grid.innerHTML = '';
+        document.getElementById('emptyTitle').textContent = 'No cards in this category';
+        document.getElementById('emptyMsg').textContent = 'Try a different filter or add a new card.';
+        addBtn.style.display = 'none';
+        empty.style.display = 'flex';
+        return;
+      }
+      empty.style.display = 'none';
+      grid.innerHTML = filtered.map(cardHTML).join('');
+    }
+
+    function renderAll() {
+      const all      = CardStore.get();
+      const filtered = currentFilter ? all.filter(i => i.category === currentFilter) : all;
+      updateStats(all);
+      renderGrid(filtered, all);
+    }
+
+    function saveCard() {
+      const name = document.getElementById('fName').value.trim();
+      const cat  = document.getElementById('fCategory').value;
+      if (!name) { showToast('Card name is required', '⚠️'); highlightError('fName'); return; }
+      if (!cat)  { showToast('Please select a category', '⚠️'); highlightError('fCategory'); return; }
+
+      CardStore.add({
+        id:           String(Date.now()),
+        name,
+        year:         document.getElementById('fYear').value.trim(),
+        series:       document.getElementById('fSeries').value.trim(),
+        category:     cat,
+        grade:        document.getElementById('fGrade').value.trim(),
+        buyPrice:     parseFloat(document.getElementById('fBuyPrice').value) || 0,
+        currentValue: parseFloat(document.getElementById('fCurrentValue').value) || 0,
+        notes:    document.getElementById('fNotes').value.trim(),
+        frontImg: pendingFrontImg || '',
+        backImg:  pendingBackImg  || '',
+        addedAt:  new Date().toISOString(),
+      });
+
+      closeAddModal();
+      resetForm();
+      renderAll();
+      showToast('Card added to collection!', '✓');
+    }
+
+    function deleteCard(id) {
+      CardStore.remove(id);
+      renderAll();
+      showToast('Card removed', '🗑');
+    }
+
+    function openAddModal()  { document.getElementById('addModal').classList.add('open'); }
+    function closeAddModal() { document.getElementById('addModal').classList.remove('open'); }
+
+    function resetForm() {
+      ['fName','fYear','fSeries','fGrade','fNotes'].forEach(id => {
+        document.getElementById(id).value = '';
+      });
+      document.getElementById('fBuyPrice').value     = '';
+      document.getElementById('fCurrentValue').value = '';
+      document.getElementById('fCategory').value     = '';
+      // reset image slots
+      pendingFrontImg = null;
+      pendingBackImg  = null;
+      const fa = document.getElementById('frontArea');
+      const ba = document.getElementById('backArea');
+      fa.classList.remove('filled'); document.getElementById('frontImg').src = '';
+      ba.classList.remove('filled'); document.getElementById('backImg').src  = '';
+      document.getElementById('ocrRawWrap').style.display      = 'none';
+      document.getElementById('scanProgressWrap').style.display = 'none';
+    }
+
+    function showToast(msg, icon) {
+      document.getElementById('toastMsg').textContent  = msg;
+      document.getElementById('toastIcon').textContent = icon || '✓';
+      const t = document.getElementById('toast');
+      t.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+    }
+
+    function highlightError(id) {
+      const el = document.getElementById(id);
+      el.classList.add('error');
+      el.addEventListener('input', () => el.classList.remove('error'), { once: true });
+    }
+
+    document.getElementById('addModal').addEventListener('click', e => {
+      if (e.target === document.getElementById('addModal')) closeAddModal();
+    });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAddModal(); });
+
+    document.querySelectorAll('.filter-pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.dataset.cat;
+        renderAll();
+      });
+    });
+
+    // ── OCR SCAN ──────────────────────────────────────────────────
+    let tesseractReady = false;
+    let pendingFrontImg = null;
+    let pendingBackImg  = null;
+
+    function loadTesseract() {
+      return new Promise((resolve, reject) => {
+        if (tesseractReady) { resolve(); return; }
+        const s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js';
+        s.onload  = () => { tesseractReady = true; resolve(); };
+        s.onerror = () => reject(new Error('Failed to load Tesseract'));
+        document.head.appendChild(s);
+      });
+    }
+
+    function compressImage(file, maxW, maxH, quality) {
+      return new Promise(resolve => {
+        const img = new Image();
+        const url = URL.createObjectURL(file);
+        img.onload = () => {
+          URL.revokeObjectURL(url);
+          const canvas = document.createElement('canvas');
+          let w = img.width, h = img.height;
+          if (w > maxW) { h = Math.round(h * maxW / w); w = maxW; }
+          if (h > maxH) { w = Math.round(w * maxH / h); h = maxH; }
+          canvas.width = w; canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          resolve(canvas.toDataURL('image/jpeg', quality));
+        };
+        img.src = url;
+      });
+    }
+
+    // FRONT: compress + OCR
+    document.getElementById('frontImgInput').addEventListener('change', async function() {
+      const file = this.files[0];
+      if (!file) return;
+      this.value = '';
+
+      const area = document.getElementById('frontArea');
+      const imgEl = document.getElementById('frontImg');
+      document.getElementById('ocrRawWrap').style.display = 'none';
+
+      // Show progress
+      const prog = document.getElementById('scanProgressWrap');
+      prog.style.display = 'block';
+      document.getElementById('scanProgress').style.width = '0%';
+      document.getElementById('scanProgressLabel').textContent = 'Compressing...';
+      area.style.pointerEvents = 'none';
+
+      try {
+        const compressed = await compressImage(file, 700, 980, 0.78);
+        pendingFrontImg = compressed;
+        imgEl.src = compressed;
+        area.classList.add('filled');
+
+        // OCR on original file for best accuracy
+        document.getElementById('scanProgressLabel').textContent = 'Reading front card... 0%';
+        await loadTesseract();
+        const result = await Tesseract.recognize(file, 'eng', {
+          logger: m => {
+            if (m.status === 'recognizing text') {
+              const pct = (m.progress * 100).toFixed(0);
+              document.getElementById('scanProgress').style.width = pct + '%';
+              document.getElementById('scanProgressLabel').textContent = 'Reading front card... ' + pct + '%';
+            }
+          }
+        });
+        prog.style.display = 'none';
+        fillFromOCR(result.data.text);
+      } catch (err) {
+        prog.style.display = 'none';
+        showToast('Scan failed — try a clearer photo', '⚠️');
+      }
+      area.style.pointerEvents = '';
+    });
+
+    // BACK: compress only, no OCR
+    document.getElementById('backImgInput').addEventListener('change', async function() {
+      const file = this.files[0];
+      if (!file) return;
+      this.value = '';
+
+      const area  = document.getElementById('backArea');
+      const imgEl = document.getElementById('backImg');
+      area.style.pointerEvents = 'none';
+      try {
+        const compressed = await compressImage(file, 700, 980, 0.78);
+        pendingBackImg = compressed;
+        imgEl.src = compressed;
+        area.classList.add('filled');
+        showToast('Back photo saved', '✓');
+      } catch (err) {
+        showToast('Failed to process back photo', '⚠️');
+      }
+      area.style.pointerEvents = '';
+    });
+
+    function fillFromOCR(rawText) {
+      const text  = rawText.replace(/[^\x20-\x7E\n]/g, ' ').replace(/[ \t]{2,}/g, ' ');
+      const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 1);
+
+      // Year
+      const yearMatch = text.match(/\b(19[8-9]\d|20[0-2]\d)(?:-\d{2})?\b/);
+      if (yearMatch) setFieldFromScan('fYear', yearMatch[1]);
+
+      // Brand / Series
+      const BRANDS = [
+        'Crown Royale','National Treasures','Immaculate Collection','Flawless',
+        'Panini Prizm','Donruss Optic','Topps Chrome','Bowman Chrome',
+        'Stadium Club','Allen & Ginter','Prizm','Optic','Mosaic','Select',
+        'Contenders','Noir','Obsidian','Flux','Revolution','Hoops','Chronicles',
+        'Donruss','Panini','Topps','Bowman','Fleer','Upper Deck','Score','Leaf',
+        'Pokemon','Vmax','VSTAR','ex','GX','EX'
+      ];
+      const textLow = text.toLowerCase();
+      for (const b of BRANDS) {
+        if (textLow.includes(b.toLowerCase())) { setFieldFromScan('fSeries', b); break; }
+      }
+
+      // Player / Pokémon name
+      const nameCandidates = lines.filter(line => {
+        if (line.length < 5 || line.length > 45) return false;
+        if (/^\d[\d\s]*$/.test(line)) return false;
+        const words = line.split(/\s+/);
+        if (words.length < 2 || words.length > 5) return false;
+        return words.every(w => /^[A-Z][a-zA-Z''\-]+$/.test(w) || /^[A-Z]{2,5}$/.test(w));
+      });
+      nameCandidates.sort((a, b) => b.length - a.length);
+      if (nameCandidates[0]) setFieldFromScan('fName', nameCandidates[0]);
+
+      document.getElementById('ocrRawText').value = lines.join(' ').trim();
+      document.getElementById('ocrRawWrap').style.display = 'block';
+      showToast('Front scanned — review fields', '📷');
+    }
+
+    function setFieldFromScan(id, val) {
+      const el = document.getElementById(id);
+      if (el.value) return;
+      el.value = val;
+      el.classList.add('autofilled');
+      el.addEventListener('input', () => el.classList.remove('autofilled'), { once: true });
+    }
+    // ─────────────────────────────────────────────────────────────
+
+    document.addEventListener('DOMContentLoaded', renderAll);
+  </script>
+</body>
+</html>
