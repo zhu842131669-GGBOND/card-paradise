@@ -199,9 +199,9 @@
     .nav-hamburger.open span:nth-child(2) { opacity: 0; }
     .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
     .mobile-nav {
-      display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      display: none; position: fixed; top: 57px; left: 0; right: 0; bottom: 0;
       background: rgba(10,10,15,0.97); backdrop-filter: blur(20px);
-      z-index: 999; flex-direction: column; padding: 80px 16px 20px;
+      z-index: 99; flex-direction: column; padding: 20px 16px;
       gap: 6px; overflow-y: auto;
     }
     .mobile-nav.open { display: flex; }
@@ -273,7 +273,6 @@
   </nav>
   <!-- MOBILE NAV -->
   <div class="mobile-nav" id="mobileNav">
-    <button class="mobile-nav-close" onclick="toggleMobileNav()">&#215;</button>
     <a href="index.html" data-page="index.html">HOME</a>
     <a href="mycard.html" data-page="mycard.html">MY CARD</a>
     <a href="pokemon.html" data-page="pokemon.html">POKEMON</a>
