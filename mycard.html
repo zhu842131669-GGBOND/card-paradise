@@ -242,12 +242,8 @@
     .btn-save:hover { opacity: 0.88; transform: scale(0.98); }
 
     /* SCAN */
-    .scan-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 6px; }
-    .scan-slot { display: flex; flex-direction: column; gap: 6px; }
-    .scan-slot-lbl {
-      font-size: 10px; font-weight: 700; letter-spacing: 1.2px;
-      color: rgba(255,255,255,0.28); text-align: center;
-    }
+    .scan-slab { display: flex; justify-content: center; margin-bottom: 6px; }
+    .scan-slab .scan-area { width: min(180px, 52%); }
     .scan-area {
       aspect-ratio: 5/7; border-radius: 10px; overflow: hidden; position: relative;
       border: 1.5px dashed rgba(129,140,248,0.3); background: rgba(129,140,248,0.04);
@@ -439,48 +435,32 @@
 
         <!-- SCAN SECTION -->
         <input type="file" id="frontImgInput" accept="image/*" capture="environment" style="display:none" />
-        <input type="file" id="backImgInput"  accept="image/*" capture="environment" style="display:none" />
 
-        <div class="scan-cols">
-          <!-- FRONT -->
-          <div class="scan-slot">
-            <div class="scan-slot-lbl">FRONT</div>
-            <div class="scan-area" id="frontArea" onclick="document.getElementById('frontImgInput').click()">
-              <img id="frontImg" src="" alt="Front" />
-              <div class="scan-placeholder">
-                <svg class="scan-placeholder-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
-                  <circle cx="12" cy="13" r="4"/>
-                </svg>
-                <span class="scan-placeholder-text">TAP TO SCAN</span>
-              </div>
-              <span class="scan-retake">Retake</span>
+        <div class="scan-slab">
+          <div class="scan-area" id="frontArea" onclick="document.getElementById('frontImgInput').click()">
+            <img id="frontImg" src="" alt="Slab" />
+            <div class="scan-placeholder">
+              <svg class="scan-placeholder-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
+                <circle cx="12" cy="13" r="4"/>
+              </svg>
+              <span class="scan-placeholder-text">TAP TO SCAN SLAB</span>
             </div>
-          </div>
-          <!-- BACK -->
-          <div class="scan-slot">
-            <div class="scan-slot-lbl">BACK</div>
-            <div class="scan-area" id="backArea" onclick="document.getElementById('backImgInput').click()">
-              <img id="backImg" src="" alt="Back" />
-              <div class="scan-placeholder">
-                <svg class="scan-placeholder-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
-                  <circle cx="12" cy="13" r="4"/>
-                </svg>
-                <span class="scan-placeholder-text">TAP TO SCAN</span>
-              </div>
-              <span class="scan-retake">Retake</span>
-            </div>
+            <span class="scan-retake">Retake</span>
           </div>
         </div>
 
-        <div class="scan-hint">Front photo = card cover &nbsp;·&nbsp; Auto-fills fields from front image</div>
+        <div class="scan-hint">Photo of graded slab · Auto-fills cert #, grade, name &amp; more</div>
         <div class="scan-progress-wrap" id="scanProgressWrap">
           <div class="scan-progress-bar"><div class="scan-progress-fill" id="scanProgress"></div></div>
-          <div class="scan-progress-label" id="scanProgressLabel">Reading front card...</div>
+          <div class="scan-progress-label" id="scanProgressLabel">Reading slab...</div>
         </div>
         <div class="form-divider">or fill manually</div>
 
+        <div class="form-group">
+          <label class="form-label">CERT #</label>
+          <input id="fCertNo" class="form-input" type="text" placeholder="e.g. 12345678" />
+        </div>
         <div class="form-group">
           <label class="form-label">CARD NAME *</label>
           <input id="fName" class="form-input" type="text" placeholder="e.g. 2021 Panini Prizm Luka Doncic" />
@@ -509,7 +489,7 @@
           </div>
           <div class="form-group">
             <label class="form-label">GRADE / CONDITION</label>
-            <input id="fGrade" class="form-input" type="text" placeholder="PSA 10, Raw NM..." />
+            <input id="fGrade" class="form-input" type="text" placeholder="PSA 10, BGS 9.5..." />
           </div>
         </div>
         <div class="form-row-2">
@@ -663,6 +643,7 @@
       CardStore.add({
         id:           String(Date.now()),
         name,
+        certNo:       document.getElementById('fCertNo').value.trim(),
         year:         document.getElementById('fYear').value.trim(),
         series:       document.getElementById('fSeries').value.trim(),
         category:     cat,
@@ -671,7 +652,6 @@
         currentValue: parseFloat(document.getElementById('fCurrentValue').value) || 0,
         notes:    document.getElementById('fNotes').value.trim(),
         frontImg: pendingFrontImg || '',
-        backImg:  pendingBackImg  || '',
         addedAt:  new Date().toISOString(),
       });
 
@@ -692,19 +672,15 @@
     function closeAddModal() { document.getElementById('addModal').classList.remove('open'); }
 
     function resetForm() {
-      ['fName','fYear','fSeries','fGrade','fNotes'].forEach(id => {
+      ['fCertNo','fName','fYear','fSeries','fGrade','fNotes'].forEach(id => {
         document.getElementById(id).value = '';
       });
       document.getElementById('fBuyPrice').value     = '';
       document.getElementById('fCurrentValue').value = '';
       document.getElementById('fCategory').value     = '';
-      // reset image slots
       pendingFrontImg = null;
-      pendingBackImg  = null;
       const fa = document.getElementById('frontArea');
-      const ba = document.getElementById('backArea');
       fa.classList.remove('filled'); document.getElementById('frontImg').src = '';
-      ba.classList.remove('filled'); document.getElementById('backImg').src  = '';
       document.getElementById('scanProgressWrap').style.display = 'none';
     }
 
@@ -793,7 +769,6 @@
     // ── OCR SCAN ──────────────────────────────────────────────────
     let tesseractReady = false;
     let pendingFrontImg = null;
-    let pendingBackImg  = null;
 
     function loadTesseract() {
       return new Promise((resolve, reject) => {
@@ -824,7 +799,7 @@
       });
     }
 
-    // FRONT: compress + OCR
+    // SLAB: compress + OCR
     document.getElementById('frontImgInput').addEventListener('change', async function() {
       const file = this.files[0];
       if (!file) return;
@@ -836,7 +811,7 @@
       const prog = document.getElementById('scanProgressWrap');
       prog.style.display = 'block';
       document.getElementById('scanProgress').style.width = '0%';
-      document.getElementById('scanProgressLabel').textContent = 'Compressing...';
+      document.getElementById('scanProgressLabel').textContent = 'Compressing slab photo...';
       area.style.pointerEvents = 'none';
 
       try {
@@ -879,32 +854,15 @@
       area.style.pointerEvents = '';
     });
 
-    // BACK: compress only, no OCR
-    document.getElementById('backImgInput').addEventListener('change', async function() {
-      const file = this.files[0];
-      if (!file) return;
-      this.value = '';
-
-      const area  = document.getElementById('backArea');
-      const imgEl = document.getElementById('backImg');
-      area.style.pointerEvents = 'none';
-      try {
-        const compressed = await compressImage(file, 700, 980, 0.78);
-        pendingBackImg = compressed;
-        imgEl.src = compressed;
-        area.classList.add('filled');
-        showToast('Back photo saved', '✓');
-      } catch (err) {
-        showToast('Failed to process back photo', '⚠️');
-      }
-      area.style.pointerEvents = '';
-    });
-
     function fillFromOCR(rawText) {
       // Keep Japanese/Chinese unicode, strip other non-printable chars
       const text  = rawText.replace(/[^\x20-\x7E　-鿿＀-￯\n]/g, ' ').replace(/[ \t]{2,}/g, ' ');
       const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
       const textLow = text.toLowerCase();
+
+      // ── Cert # (7–12 digit standalone number, common on PSA/BGS/CGC labels) ─
+      const certMatch = text.match(/(?:^|[\s:#])(\d{7,12})(?:\s|$)/m);
+      if (certMatch) setFieldFromScan('fCertNo', certMatch[1]);
 
       // ── Year ──────────────────────────────────────────────────────
       const yearMatch = text.match(/\b(19[8-9]\d|20[0-2]\d)(?:-\d{2})?\b/);
