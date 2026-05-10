@@ -325,20 +325,77 @@
       100% { opacity: 0; transform: scale(0.88) translateY(-24px); }
     }
 
-    @media (max-width: 768px) {
-      nav { padding: 16px 20px; }
-      nav ul { display: none; }
-      .hero { padding: 40px 20px 28px; }
-      .stats-bar { padding: 0 20px 28px; }
-      .controls-row { padding: 0 20px 18px; }
-      .collection-grid { padding: 0 20px 60px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
-      .collection-empty { margin: 0 20px 60px; }
+    /* HAMBURGER */
+    .nav-hamburger {
+      display: none; flex-direction: column; gap: 5px;
+      background: none; border: none; cursor: pointer; padding: 6px; margin-left: 8px;
     }
-    @media (max-width: 500px) {
+    .nav-hamburger span {
+      display: block; width: 22px; height: 2px;
+      background: rgba(255,255,255,0.7); border-radius: 2px; transition: all .22s;
+    }
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* MOBILE NAV OVERLAY */
+    .mobile-nav {
+      display: none; position: fixed; top: 57px; left: 0; right: 0; bottom: 0;
+      background: rgba(10,10,15,0.97); backdrop-filter: blur(20px);
+      z-index: 99; flex-direction: column; padding: 20px 16px;
+      gap: 6px; overflow-y: auto;
+    }
+    .mobile-nav.open { display: flex; }
+    .mobile-nav a {
+      display: block; padding: 14px 18px; border-radius: 12px;
+      color: rgba(255,255,255,0.65); text-decoration: none;
+      font-size: 14px; font-weight: 700; letter-spacing: 0.8px;
+      border: 1px solid rgba(255,255,255,0.07); transition: all .2s;
+    }
+    .mobile-nav a.active { color: var(--theme); background: var(--theme-dim); border-color: rgba(129,140,248,0.25); }
+    .mobile-nav a:hover { color: #fff; background: rgba(255,255,255,0.07); }
+    .mobile-nav-divider { height: 1px; background: rgba(255,255,255,0.07); margin: 6px 0; }
+    .mobile-nav-icons { display: flex; gap: 12px; padding: 10px 18px 0; }
+    .mobile-nav-icons .nav-icon-btn { width: 40px; height: 40px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); }
+
+    @media (max-width: 768px) {
+      nav { padding: 14px 16px; }
+      nav ul { display: none; }
+      .nav-hamburger { display: flex; }
+      .logo { font-size: 18px; }
+
+      .hero { padding: 28px 16px 20px; }
+      .hero h1 { font-size: clamp(26px, 7vw, 40px); }
+
+      .stats-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 16px 20px; }
+      .stat-pill { min-width: 0; padding: 18px 14px; }
+
+      .controls-row { padding: 0 16px 16px; flex-direction: column; align-items: stretch; gap: 10px; }
+      .filter-pills { overflow-x: auto; flex-wrap: nowrap; padding-bottom: 2px; -webkit-overflow-scrolling: touch; }
+      .filter-pill { white-space: nowrap; flex-shrink: 0; }
+      .btn-add-card { width: 100%; padding: 12px; font-size: 13px; }
+
+      .collection-grid { padding: 0 16px 80px; grid-template-columns: 1fr 1fr; gap: 12px; }
+      .collection-empty { margin: 0 16px 60px; }
+
+      /* bottom-sheet modal */
+      .modal-overlay { align-items: flex-end; }
+      .modal-box {
+        width: 100%; max-width: 100%; max-height: 92vh;
+        border-radius: 20px 20px 0 0; border-bottom: none;
+        transform: translateY(40px);
+      }
+      .modal-overlay.open .modal-box { transform: translateY(0); }
+      .modal-header { padding: 18px 18px 0; }
+      .form-scroll { padding: 16px 18px; }
+      .modal-footer { padding: 12px 18px calc(18px + env(safe-area-inset-bottom, 0px)); }
+    }
+    @media (max-width: 480px) {
       .collection-grid { grid-template-columns: 1fr; }
       .form-row-2 { grid-template-columns: 1fr; }
-      .stats-bar { gap: 10px; }
-      .stat-pill { min-width: 130px; }
+      .stat-pill { padding: 14px 10px; }
+      .stat-val { font-size: clamp(18px, 6vw, 28px); }
+      .col-card-name { font-size: 13px; }
     }
   </style>
 </head>
@@ -375,7 +432,37 @@
         </button>
       </li>
     </ul>
+    <button class="nav-hamburger" id="navHamburger" onclick="toggleMobileNav()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
   </nav>
+
+  <!-- MOBILE NAV -->
+  <div class="mobile-nav" id="mobileNav">
+    <a href="index.html">HOME</a>
+    <a href="mycard.html" class="active">MY CARD</a>
+    <a href="pokemon.html">POKEMON</a>
+    <a href="basketball.html">BASKETBALL</a>
+    <a href="soccer.html">SOCCER</a>
+    <a href="kpop.html">K-POP</a>
+    <a href="others.html">OTHERS</a>
+    <div class="mobile-nav-divider"></div>
+    <a href="index.html#why">ABOUT US</a>
+    <a href="index.html#contact">CONTACT US</a>
+    <div class="mobile-nav-icons">
+      <button class="nav-icon-btn" onclick="location.href='account.html'" title="Account">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="17" height="17">
+          <circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 10-16 0"/>
+        </svg>
+      </button>
+      <button class="nav-icon-btn" onclick="location.href='cart.html'" title="Cart">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="17" height="17">
+          <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+          <path d="M1 1h4l2.68 13.39a2 2 0 001.98 1.61h9.72a2 2 0 001.98-1.61L23 6H6"/>
+        </svg>
+      </button>
+    </div>
+  </div>
 
   <!-- HERO -->
   <div class="hero">
@@ -978,6 +1065,21 @@
       el.addEventListener('change', () => el.classList.remove('autofilled'), { once: true });
     }
     // ─────────────────────────────────────────────────────────────
+
+    function toggleMobileNav() {
+      const btn = document.getElementById('navHamburger');
+      const nav = document.getElementById('mobileNav');
+      btn.classList.toggle('open');
+      nav.classList.toggle('open');
+    }
+    document.addEventListener('click', e => {
+      const nav = document.getElementById('mobileNav');
+      const btn = document.getElementById('navHamburger');
+      if (nav.classList.contains('open') && !nav.contains(e.target) && !btn.contains(e.target)) {
+        nav.classList.remove('open');
+        btn.classList.remove('open');
+      }
+    });
 
     document.addEventListener('DOMContentLoaded', renderAll);
   </script>
