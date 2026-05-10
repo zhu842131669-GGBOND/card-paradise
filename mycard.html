@@ -327,9 +327,10 @@
 
     /* HAMBURGER */
     .nav-hamburger {
-      display: none; flex-direction: column; gap: 5px;
+      display: flex; flex-direction: column; gap: 5px;
       background: none; border: none; cursor: pointer; padding: 6px; margin-left: 8px;
     }
+    @media (min-width: 769px) { .nav-hamburger { display: none; } }
     .nav-hamburger span {
       display: block; width: 22px; height: 2px;
       background: rgba(255,255,255,0.7); border-radius: 2px; transition: all .22s;
@@ -361,7 +362,6 @@
     @media (max-width: 768px) {
       nav { padding: 14px 16px; }
       nav ul { display: none; }
-      .nav-hamburger { display: flex; }
       .logo { font-size: 18px; }
 
       .hero { padding: 28px 16px 20px; }
