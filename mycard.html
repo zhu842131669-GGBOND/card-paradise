@@ -859,15 +859,28 @@
         imgEl.src = compressed;
         area.classList.add('filled');
 
-        // OCR on original file for best accuracy
-        document.getElementById('scanProgressLabel').textContent = 'Reading front card... 0%';
+        // OCR on compressed image (faster than original raw file)
+        document.getElementById('scanProgressLabel').textContent = 'Loading OCR engine...';
         await loadTesseract();
-        const result = await Tesseract.recognize(file, 'eng', {
+        const result = await Tesseract.recognize(compressed, 'eng', {
           logger: m => {
-            if (m.status === 'recognizing text') {
-              const pct = (m.progress * 100).toFixed(0);
-              document.getElementById('scanProgress').style.width = pct + '%';
-              document.getElementById('scanProgressLabel').textContent = 'Reading front card... ' + pct + '%';
+            const bar   = document.getElementById('scanProgress');
+            const label = document.getElementById('scanProgressLabel');
+            if (m.status === 'loading tesseract core') {
+              label.textContent = 'Loading OCR engine...';
+              bar.style.width = '10%';
+            } else if (m.status === 'initializing tesseract') {
+              label.textContent = 'Initializing...';
+              bar.style.width = '20%';
+            } else if (m.status === 'loading language traineddata') {
+              label.textContent = 'Downloading language data... ' + (m.progress * 100).toFixed(0) + '%';
+              bar.style.width = (20 + m.progress * 30) + '%';
+            } else if (m.status === 'initializing api') {
+              label.textContent = 'Starting recognition...';
+              bar.style.width = '55%';
+            } else if (m.status === 'recognizing text') {
+              label.textContent = 'Reading card... ' + (m.progress * 100).toFixed(0) + '%';
+              bar.style.width = (55 + m.progress * 45) + '%';
             }
           }
         });
