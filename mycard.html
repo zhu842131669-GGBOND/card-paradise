@@ -915,41 +915,69 @@
     });
 
     function fillFromOCR(rawText) {
-      const text  = rawText.replace(/[^\x20-\x7E\n]/g, ' ').replace(/[ \t]{2,}/g, ' ');
-      const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 1);
+      // Keep Japanese/Chinese unicode, strip other non-printable chars
+      const text  = rawText.replace(/[^\x20-\x7E　-鿿＀-￯\n]/g, ' ').replace(/[ \t]{2,}/g, ' ');
+      const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+      const textLow = text.toLowerCase();
 
-      // Year
+      // ── Year ──────────────────────────────────────────────────────
       const yearMatch = text.match(/\b(19[8-9]\d|20[0-2]\d)(?:-\d{2})?\b/);
       if (yearMatch) setFieldFromScan('fYear', yearMatch[1]);
 
-      // Brand / Series
+      // ── Grade (PSA / BGS / CGC / SGC / HGA) ──────────────────────
+      const gradeMatch = text.match(/\b(PSA|BGS|CGC|SGC|HGA)\s*(\d{1,2}(?:\.\d)?)\b/i);
+      if (gradeMatch) setFieldFromScan('fGrade', gradeMatch[1].toUpperCase() + ' ' + gradeMatch[2]);
+
+      // ── Category auto-detect ──────────────────────────────────────
+      const CAT_KEYS = {
+        basketball: ['nba','basketball','lebron','jordan','kobe','curry','durant','doncic','mcgrady','yao ming','shaquille','barkley'],
+        soccer:     ['fifa','soccer','football','premier league','la liga','bundesliga','serie a','champions league','messi','ronaldo','de bruyne','palmer','haaland'],
+        pokemon:    ['pokemon','pokémon','ポケモン','わざ','hp','evolves from','basic','trainer','energy','stage 1','stage 2','vmax','vstar','ex ','gx '],
+        kpop:       ['kpop','k-pop','photocard','idol','bts','exo','blackpink','twice','stray kids','aespa','newjeans','seventeen'],
+      };
+      for (const [cat, keys] of Object.entries(CAT_KEYS)) {
+        if (keys.some(k => textLow.includes(k))) { setSelectFromScan('fCategory', cat); break; }
+      }
+
+      // ── Brand / Series ────────────────────────────────────────────
       const BRANDS = [
         'Crown Royale','National Treasures','Immaculate Collection','Flawless',
         'Panini Prizm','Donruss Optic','Topps Chrome','Bowman Chrome',
         'Stadium Club','Allen & Ginter','Prizm','Optic','Mosaic','Select',
         'Contenders','Noir','Obsidian','Flux','Revolution','Hoops','Chronicles',
         'Donruss','Panini','Topps','Bowman','Fleer','Upper Deck','Score','Leaf',
-        'Pokemon','Vmax','VSTAR','ex','GX','EX'
+        'Pokemon','Vmax','VSTAR','GX','EX'
       ];
-      const textLow = text.toLowerCase();
       for (const b of BRANDS) {
         if (textLow.includes(b.toLowerCase())) { setFieldFromScan('fSeries', b); break; }
       }
 
-      // Player / Pokémon name
-      const nameCandidates = lines.filter(line => {
-        if (line.length < 5 || line.length > 45) return false;
+      // ── Card Name ─────────────────────────────────────────────────
+      // English: Title-Case proper-noun lines (2–5 words)
+      const enNames = lines.filter(line => {
+        if (line.length < 4 || line.length > 50) return false;
         if (/^\d[\d\s]*$/.test(line)) return false;
         const words = line.split(/\s+/);
         if (words.length < 2 || words.length > 5) return false;
-        return words.every(w => /^[A-Z][a-zA-Z''\-]+$/.test(w) || /^[A-Z]{2,5}$/.test(w));
+        return words.every(w => /^[A-Z][a-zA-Z'\-]+$/.test(w) || /^[A-Z]{2,6}$/.test(w));
       });
-      nameCandidates.sort((a, b) => b.length - a.length);
-      if (nameCandidates[0]) setFieldFromScan('fName', nameCandidates[0]);
+      enNames.sort((a, b) => b.length - a.length);
 
+      // Japanese: lines that are mostly kana/kanji, 2–15 chars
+      const jpNames = lines.filter(line => {
+        if (line.length < 2 || line.length > 20) return false;
+        const jpChars = (line.match(/[぀-鿿]/g) || []).length;
+        return jpChars >= 2 && jpChars / line.length > 0.5;
+      });
+      jpNames.sort((a, b) => b.length - a.length);
+
+      const bestName = enNames[0] || jpNames[0] || '';
+      if (bestName) setFieldFromScan('fName', bestName);
+
+      // ── Raw text reference ────────────────────────────────────────
       document.getElementById('ocrRawText').value = lines.join(' ').trim();
       document.getElementById('ocrRawWrap').style.display = 'block';
-      showToast('Front scanned — review fields', '📷');
+      showToast('Scan complete — fields auto-filled', '📷');
     }
 
     function setFieldFromScan(id, val) {
@@ -958,6 +986,14 @@
       el.value = val;
       el.classList.add('autofilled');
       el.addEventListener('input', () => el.classList.remove('autofilled'), { once: true });
+    }
+
+    function setSelectFromScan(id, val) {
+      const el = document.getElementById(id);
+      if (el.value) return;
+      el.value = val;
+      el.classList.add('autofilled');
+      el.addEventListener('change', () => el.classList.remove('autofilled'), { once: true });
     }
     // ─────────────────────────────────────────────────────────────
 
