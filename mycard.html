@@ -268,15 +268,6 @@
       color: rgba(255,255,255,0.55); white-space: nowrap; display: none; pointer-events: none;
     }
     .scan-area.filled .scan-retake { display: block; }
-    .scan-lang-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
-    .scan-lang-lbl { font-size: 10px; color: rgba(255,255,255,0.28); font-weight: 700; letter-spacing: 0.5px; white-space: nowrap; }
-    .scan-lang-btn {
-      padding: 4px 13px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);
-      background: none; color: rgba(255,255,255,0.35); font-size: 11px; font-weight: 700;
-      cursor: pointer; transition: all .2s;
-    }
-    .scan-lang-btn:hover { border-color: rgba(255,255,255,0.22); color: rgba(255,255,255,0.6); }
-    .scan-lang-btn.active { border-color: var(--theme); color: var(--theme); background: var(--theme-dim); }
     .scan-hint { font-size: 11px; color: rgba(255,255,255,0.2); text-align: center; margin-top: 6px; }
     .scan-progress-wrap { display: none; margin-top: 10px; }
     .scan-progress-bar { height: 3px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
@@ -490,11 +481,6 @@
           </div>
         </div>
 
-        <div class="scan-lang-row">
-          <span class="scan-lang-lbl">CARD LANGUAGE</span>
-          <button class="scan-lang-btn active" data-lang="eng"     onclick="setScanLang(this)">English</button>
-          <button class="scan-lang-btn"         data-lang="jpn+eng" onclick="setScanLang(this)">日本語</button>
-        </div>
         <div class="scan-hint">Front photo = card cover &nbsp;·&nbsp; Auto-fills fields from front image</div>
         <div class="scan-progress-wrap" id="scanProgressWrap">
           <div class="scan-progress-bar"><div class="scan-progress-fill" id="scanProgress"></div></div>
@@ -820,13 +806,6 @@
     let tesseractReady = false;
     let pendingFrontImg = null;
     let pendingBackImg  = null;
-    let scanLang = 'eng';
-
-    function setScanLang(btn) {
-      document.querySelectorAll('.scan-lang-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      scanLang = btn.dataset.lang;
-    }
 
     function loadTesseract() {
       return new Promise((resolve, reject) => {
@@ -883,7 +862,7 @@
         // OCR on compressed image (faster than original raw file)
         document.getElementById('scanProgressLabel').textContent = 'Loading OCR engine...';
         await loadTesseract();
-        const result = await Tesseract.recognize(compressed, scanLang, {
+        const result = await Tesseract.recognize(compressed, 'jpn+eng', {
           logger: m => {
             const bar   = document.getElementById('scanProgress');
             const label = document.getElementById('scanProgressLabel');
